@@ -1,0 +1,45 @@
+# depslib dependency file v1.0
+1461821620 source:c:\users\usuario\documents\liusamarchivos(noborrarrrrr)\projects\nav-test\miniwin.cpp
+	<fstream>
+	<sstream>
+	<queue>
+	<math.h>
+	<process.h>
+	<windows.h>
+	<windowsx.h>
+	"miniwin.h"
+	<cstdio>
+	<cstdlib>
+	<iostream>
+	<string>
+	<queue>
+	<X11/Xlib.h>
+	<X11/Xutil.h>
+	<X11/Xos.h>
+	<X11/Xatom.h>
+	<X11/keysym.h>
+	"miniwin.h"
+
+1461821620 c:\users\usuario\documents\liusamarchivos(noborrarrrrr)\projects\nav-test\miniwin.h
+	<iostream>
+
+1764193093 source:c:\users\usuario\documents\liusamarchivos(noborrarrrrr)\projects\nav-test\main.cpp
+	"miniwin.h"
+	<stdbool.h>
+	<windows.h>
+	<stdio.h>
+	"entidades.h"
+
+1764192761 c:\users\usuario\documents\liusamarchivos(noborrarrrrr)\projects\nav-test\entidades.h
+	"miniwin.h"
+	<stdbool.h>
+	<windows.h>
+	<stdio.h>
+
+1764179055 c:\users\usuario\documents\liusamarchivos(noborrarrrrr)\projects\nav-test\main.cpp
+	"miniwin.h"
+	<stdbool.h>
+	<windows.h>
+	<stdio.h>
+	"entidades.h"
+
