@@ -9,6 +9,13 @@
 
 using namespace miniwin;
 
+void reproducirEfecto(const std::string& rutaArchivo) {
+    // Solo SND_ASYNC. Esto interrumpe brevemente el loop de fondo,
+    // pero el fondo debería reanudarse inmediatamente.
+    PlaySound(rutaArchivo.c_str(), NULL, SND_ASYNC | SND_NODEFAULT);
+}
+
+
 // ==================== BALAS NORMALES (PROTA Y SOLDADOS) ====================
 
 // Dibuja la flecha del protagonista y las balas de los enemigos normales
@@ -128,6 +135,12 @@ bool hayColision(int x_bala, int y_bala, int &x_entidad, int &y_entidad) {
     bool colision_x = (x_bala >= x_entidad - 30 && x_bala <= x_entidad + 30);
     bool colision_y = (y_bala >= y_entidad - 45 && y_bala <= y_entidad + 45);
     return colision_x && colision_y;
+}
+
+bool existeEntidadDentroMapa(int &x_entidad, int &y_entidad) {
+    bool existeEn_x = (x_entidad >= 0 && x_entidad < 1000);
+    bool existeEn_y = (y_entidad >= 0 && y_entidad < 650);
+    return existeEn_x && existeEn_y;
 }
 
 int marcarTiempoActual(int tiempoJuegoActual) {
@@ -285,6 +298,9 @@ int main() {
     bool esCartelSegundoNivelActivo = false;
     bool esCartelTercerNivelActivo  = false;
     bool esCartelComboActivo        = false;
+    bool esCarteVictoriaActivo      = false;
+    bool esCartelDerrotaActivo      = false;
+    bool esCartelLevel1Activo       = true; // Cuando apenas comieze el juego, se lancge
     int tiempoMarcado = 0;
 
     int sizeAncho = 1000;
@@ -296,7 +312,7 @@ int main() {
 
     int bordeIzquierdoMapa  = 20;
     int bordeDerechoMapa    = 950;
-    int bordeSuperiorMapa   = 20;
+    int bordeSuperiorMapa   = 150;
     int bordeInferiorMapa   = 600;
 
     int contadorEnemigosEliminados = 0;
@@ -309,7 +325,7 @@ int main() {
     bool balaProtaVolando = false;
     int contadorVidaProtagonista = 3;
 
-    int enemigoPrincipal_X = 900, enemigoPrincipal_Y = 100;
+    int enemigoPrincipal_X = 900, enemigoPrincipal_Y = 200;
     int enemigo2_X = 800, enemigo2_Y = 100;
     int enemigo3_X = 700, enemigo3_Y = 150;
 
@@ -332,7 +348,26 @@ int main() {
 
     int t = tecla();
 
+    mciSendString("open sonidos/background-sound-level1.WAV type mpegvideo alias background-level1", NULL, 0, 0); //Libreria de windos para reproducir sonido.
+    mciSendString("open sonidos/background-sound-level2.WAV type mpegvideo alias background-level2", NULL, 0, 0); //Libreria de windos para reproducir sonido.
+    mciSendString("open sonidos/background-sound-level3.WAV type mpegvideo alias background-level3", NULL, 0, 0); //Libreria de windos para reproducir sonido.
+
+    mciSendString("open sonidos/lose-sound.WAV type mpegvideo alias lose-sound", NULL, 0, 0); //Libreria de windos para reproducir sonido.
+    mciSendString("open sonidos/win-victory.WAV type mpegvideo alias win-victory", NULL, 0, 0); //Libreria de windos para reproducir sonido.
+
+    mciSendString("open sonidos/hahaha.WAV type mpegvideo alias hahaha", NULL, 0, 0); //Libreria de windos para reproducir sonido.
+    mciSendString("open sonidos/inca-dead.WAV type mpegvideo alias inca-dead", NULL, 0, 0); //Libreria de windos para reproducir sonido.
+
+
+    mciSendString("open sonidos/round1-fight.WAV type mpegvideo alias round-one", NULL, 0, 0);
+    mciSendString("open sonidos/round2-fight.WAV type mpegvideo alias round-two", NULL, 0, 0);
+    mciSendString("open sonidos/finalround-fight.WAV type mpegvideo alias round-three", NULL, 0, 0);
+
+
     while (t != ESCAPE) {
+        mciSendString("play round-one", NULL, 0, 0);  //no Repetir
+        mciSendString("play background-level1 repeat notify", NULL, 0, 0); //repetir es sonido de fondo de lvl 1
+
         // ================= ENTRADA PROTAGONISTA =================
         if (t == ARRIBA && prota_Y >= bordeSuperiorMapa) {
             prota_Y -= 30;
@@ -385,7 +420,8 @@ int main() {
         if (t == ESPACIO && !balaProtaVolando) {
             disparar(prota_X, prota_Y, balaProta_X, balaProta_Y);
             balaProtaVolando = true;
-            PlaySound("sonidos/disparo-prota-sound.WAV", NULL, SND_ASYNC);
+            PlaySound("sonidos/lance.WAV", NULL, SND_ASYNC);
+
         }
 
         // ================= LÓGICA BALA PROTAGONISTA =================
@@ -399,7 +435,7 @@ int main() {
                     botarEntidadDelMapa(enemigoPrincipal_X, enemigoPrincipal_Y);
                     contadorEnemigosEliminados++;
                     contadorComboKill++;
-                    PlaySound("sonidos/any-nav-explosion.WAV", NULL, SND_ASYNC);
+                    reproducirEfecto("sonidos/espa-dead.WAV");
                 }
 
                 if (hayColision(balaProta_X, balaProta_Y,
@@ -407,7 +443,7 @@ int main() {
                     botarEntidadDelMapa(enemigo2_X, enemigo2_Y);
                     contadorEnemigosEliminados++;
                     contadorComboKill++;
-                    PlaySound("sonidos/any-nav-explosion.WAV", NULL, SND_ASYNC);
+                    reproducirEfecto("sonidos/espa-dead.WAV");
                 }
 
                 if (hayColision(balaProta_X, balaProta_Y,
@@ -415,7 +451,7 @@ int main() {
                     botarEntidadDelMapa(enemigo3_X, enemigo3_Y);
                     contadorEnemigosEliminados++;
                     contadorComboKill++;
-                    PlaySound("sonidos/any-nav-explosion.WAV", NULL, SND_ASYNC);
+                    reproducirEfecto("sonidos/espa-dead.WAV");
                 }
             } else {
                 // Nivel 3: colisión con el barco jefe
@@ -428,14 +464,16 @@ int main() {
 
                     if (vidaJefeFinal > 0) {
                         vidaJefeFinal--;
-                        PlaySound("sonidos/any-nav-explosion.WAV", NULL, SND_ASYNC);
+                        reproducirEfecto("sonidos/damage-finalboss.WAV");
                     }
                     if (vidaJefeFinal <= 0) {
                         botarEntidadDelMapa(enemigoPrincipal_X, enemigoPrincipal_Y);
                         contadorEnemigosEliminados++;
                         contadorComboKill++;
                         espera(100);
-                        mensaje("¡GANASTE! VENCISTE AL JEFE FINAL");
+                        mciSendString("close background-level3", NULL, 0, 0);  //Paramos la musica del lvl 2
+                        esCarteVictoriaActivo = true;
+                        mciSendString("play win-victory repeat notify", NULL, 0, 0); //Empieza la musica lvl 3
                         t = ESCAPE;
                     }
                 }
@@ -446,20 +484,22 @@ int main() {
                     botarEntidadDelMapa(enemigo2_X, enemigo2_Y);
                     contadorEnemigosEliminados++;
                     contadorComboKill++;
-                    PlaySound("sonidos/any-nav-explosion.WAV", NULL, SND_ASYNC);
+                    reproducirEfecto("sonidos/espa-dead.WAV");
                 }
                 if (hayColision(balaProta_X, balaProta_Y,
                                 enemigo3_X, enemigo3_Y)) {
                     botarEntidadDelMapa(enemigo3_X, enemigo3_Y);
                     contadorEnemigosEliminados++;
                     contadorComboKill++;
-                    PlaySound("sonidos/any-nav-explosion.WAV", NULL, SND_ASYNC);
+                    reproducirEfecto("sonidos/espa-dead.WAV");
+
                 }
             }
 
             // Activar DOUBLE KILL
             if (contadorComboKill >= 2) {
                 esCartelComboActivo = true;
+                reproducirEfecto("sonidos/double-kill.WAV");
                 tiempoMarcado = marcarTiempoActual(tiempoJuegoActual);
             }
 
@@ -473,10 +513,11 @@ int main() {
         // ================= DISPAROS ENEMIGOS NORMALES =================
         if (nivelActual <= 2) {
             // Enemigo 1
-            if (aux == 0 && !balaEnemigo1Volando) {
+            if (aux == 0 && !balaEnemigo1Volando && existeEntidadDentroMapa(enemigoPrincipal_X, enemigoPrincipal_Y)) {
                 disparar(enemigoPrincipal_X, enemigoPrincipal_Y,
                          balaEnemigo1_X, balaEnemigo1_Y);
                 balaEnemigo1Volando = true;
+                reproducirEfecto("sonidos/shootgun-espa.WAV");
             }
             if (balaEnemigo1Volando) {
                 moverBalaIzquierda(balaEnemigo1_X, nivelActual);
@@ -488,15 +529,17 @@ int main() {
                     balaEnemigo1Volando = false;
                     balaEnemigo1_X = balaEnemigo1_Y = 2000;
                     contadorVidaProtagonista--;
-                    PlaySound("sonidos/any-nav-explosion.WAV", NULL, SND_ASYNC);
+                    reproducirEfecto("sonidos/inca-hurt.WAV");
                 }
             }
 
             // Enemigo 2
-            if (aux2 == 0 && !balaEnemigo2Volando) {
+            if (aux2 == 0 && !balaEnemigo2Volando && existeEntidadDentroMapa(enemigo2_X, enemigo3_Y)) {
                 disparar(enemigo2_X, enemigo2_Y,
                          balaEnemigo2_X, balaEnemigo2_Y);
+                reproducirEfecto("sonidos/shootgun-espa.WAV");
                 balaEnemigo2Volando = true;
+
             }
             if (balaEnemigo2Volando) {
                 moverBalaIzquierda(balaEnemigo2_X, nivelActual);
@@ -508,14 +551,15 @@ int main() {
                     balaEnemigo2Volando = false;
                     balaEnemigo2_X = balaEnemigo2_Y = 5000;
                     contadorVidaProtagonista--;
-                    PlaySound("sonidos/any-nav-explosion.WAV", NULL, SND_ASYNC);
+                    reproducirEfecto("sonidos/inca-hurt.WAV");
                 }
             }
 
             // Enemigo 3
-            if (aux3 == 0 && !balaEnemigo3Volando) {
+            if (aux3 == 0 && !balaEnemigo3Volando && existeEntidadDentroMapa(enemigo3_X, enemigo3_Y)) {
                 disparar(enemigo3_X, enemigo3_Y,
                          balaEnemigo3_X, balaEnemigo3_Y);
+                reproducirEfecto("sonidos/shootgun-espa.WAV");
                 balaEnemigo3Volando = true;
             }
             if (balaEnemigo3Volando) {
@@ -528,7 +572,7 @@ int main() {
                     balaEnemigo3Volando = false;
                     balaEnemigo3_X = balaEnemigo3_Y = 5000;
                     contadorVidaProtagonista--;
-                    PlaySound("sonidos/any-nav-explosion.WAV", NULL, SND_ASYNC);
+                    reproducirEfecto("sonidos/inca-hurt.WAV");
                 }
             }
         } else {
@@ -536,13 +580,17 @@ int main() {
             int prob = std::rand() % 200;
             if (prob == 0) {
                 lanzarAtaqueJefe(balasJefe, MAX_BALAS_JEFE,
-                                 enemigoPrincipal_X, enemigoPrincipal_Y, 1);
+                                 enemigoPrincipal_X, enemigoPrincipal_Y, 1); //Un solo canon
+                                 reproducirEfecto("sonidos/basic-atack-finalboss.WAV");
+
             } else if (prob == 1) {
                 lanzarAtaqueJefe(balasJefe, MAX_BALAS_JEFE,
-                                 enemigoPrincipal_X, enemigoPrincipal_Y, 2);
+                                 enemigoPrincipal_X, enemigoPrincipal_Y, 2); // 3 canon
+                                 reproducirEfecto("sonidos/multi-canon-finalboss.WAV");
             } else if (prob == 2) {
                 lanzarAtaqueJefe(balasJefe, MAX_BALAS_JEFE,
-                                 enemigoPrincipal_X, enemigoPrincipal_Y, 3);
+                                 enemigoPrincipal_X, enemigoPrincipal_Y, 3); // Lluvia de morteros: varios proyectiles diagonales
+                                 reproducirEfecto("sonidos/special-atack-finalboss.WAV");
             }
 
             moverBalasJefe(balasJefe, MAX_BALAS_JEFE,
@@ -555,7 +603,7 @@ int main() {
                                 prota_X, prota_Y)) {
                     balasJefe[i].activa = false;
                     contadorVidaProtagonista--;
-                    PlaySound("sonidos/any-nav-explosion.WAV", NULL, SND_ASYNC);
+                    reproducirEfecto("sonidos/inca-hurt.WAV");
                 }
             }
         }
@@ -566,7 +614,12 @@ int main() {
             contadorEnemigosEliminados = 0;
 
             nivelActual = 2;
+            mciSendString("close background-level1", NULL, 0, 0);  //Paramos la musica del lvl 1
             esCartelSegundoNivelActivo = true;
+
+            mciSendString("play round-two", NULL, 0, 0);  //no Repetir
+            mciSendString("play background-level2 repeat notify", NULL, 0, 0); //Empieza la musica lvl 2
+
             tiempoMarcado = marcarTiempoActual(tiempoJuegoActual);
 
             prota_X = 100; prota_Y = 300;
@@ -578,8 +631,13 @@ int main() {
         if (contadorEnemigosEliminados >= 3 && nivelActual == 2) {
             balaProtaVolando = false;
             contadorEnemigosEliminados = 0;
+            mciSendString("close background-level2", NULL, 0, 0);  //Paramos la musica del lvl 2
 
             nivelActual = 3;
+            mciSendString("play round-three", NULL, 0, 0);  //no Repetir
+            mciSendString("play background-level3 repeat notify", NULL, 0, 0); //Empieza la musica lvl 3
+
+
             esCartelSegundoNivelActivo = false;
             esCartelTercerNivelActivo  = true;
             tiempoMarcado = marcarTiempoActual(tiempoJuegoActual);
@@ -611,7 +669,7 @@ int main() {
         // ================= CARTELES DE NIVELES =================
         if (esCartelSegundoNivelActivo) {
             if (!(tiempoJuegoActual >= tiempoMarcado &&
-                  tiempoJuegoActual <= tiempoMarcado + 5)) {
+                  tiempoJuegoActual <= tiempoMarcado + 8)) {
                 esCartelSegundoNivelActivo = false;
                 tiempoMarcado = 0;
             }
@@ -619,26 +677,48 @@ int main() {
 
         if (esCartelTercerNivelActivo) {
             if (!(tiempoJuegoActual >= tiempoMarcado &&
-                  tiempoJuegoActual <= tiempoMarcado + 5)) {
+                  tiempoJuegoActual <= tiempoMarcado + 8)) {
                 esCartelTercerNivelActivo = false;
                 tiempoMarcado = 0;
+            }
+        }
+        if (esCartelLevel1Activo) {
+            if (tiempoJuegoActual == 8) {
+                esCartelLevel1Activo = false;
             }
         }
 
         // ================= GAME OVER =================
         if (contadorVidaProtagonista <= 0) {
+            if(nivelActual ==3 ){
+                mciSendString("close background-level3", NULL, 0, 0);  //Paramos la musica del lvl 2
+                mciSendString("play lose-sound repeat notify", NULL, 0, 0); //Empieza musica de perdida
+                mciSendString("play hahaha repeat", NULL, 0, 0);  //no Repetir BURLA POR  CASI LOGRARLO
+
+            }
+            if (nivelActual ==2 || nivelActual ==1){
+                mciSendString("close background-level1", NULL, 0, 0);  //Paramos la musica del lvl 2
+                mciSendString("close background-level2", NULL, 0, 0);  //Paramos la musica del lvl 2
+
+                mciSendString("play lose-sound repeat notify", NULL, 0, 0); //Empieza musica de perdida
+                mciSendString("play inca-dead", NULL, 0, 0);  //no Repetir
+            }
+            esCartelDerrotaActivo = true;
             botarEntidadDelMapa(prota_X, prota_Y);
-            espera(100);
-            mensaje("PERDISTE :(");
+            espera(1000);
             t = ESCAPE;
         }
 
         // ================= DIBUJO EN PANTALLA =================
         borra();
-
+        dibujarBackground(sizeAncho,sizeAlto, nivelActual);
         dibujarMensajeDoubleKill(sizeAncho, sizeAlto, esCartelComboActivo);
+        dibujarCartelLevel1(sizeAncho, sizeAlto, esCartelLevel1Activo);
         dibujarCartelSegundoNivel(sizeAncho, sizeAlto, esCartelSegundoNivelActivo);
         dibujarCartelTercerNivel(sizeAncho, sizeAlto, esCartelTercerNivelActivo);
+
+        dibujarCartelVictora(sizeAncho,sizeAlto, esCarteVictoriaActivo);
+        dibujarCartelDerrota(sizeAncho, sizeAlto, esCartelDerrotaActivo);
 
         dibujarEnemigoPrincipal(enemigoPrincipal_X, enemigoPrincipal_Y, nivelActual);
         dibujarEnemigo2(enemigo2_X, enemigo2_Y, nivelActual);
@@ -656,7 +736,7 @@ int main() {
                       "ENEMIGO", nivelActual);
         dibujarBalaSi(balaEnemigo3Volando, balaEnemigo3_X, balaEnemigo3_Y,
                       "ENEMIGO", nivelActual);
-
+        std::cout << "valor: " << tiempoJuegoActual << std::endl;
         // Balas del jefe
         dibujarBalasJefe(balasJefe, MAX_BALAS_JEFE);
 

@@ -23,18 +23,19 @@
 1461821620 c:\users\usuario\documents\liusamarchivos(noborrarrrrr)\projects\nav-test\miniwin.h
 	<iostream>
 
-1764193093 source:c:\users\usuario\documents\liusamarchivos(noborrarrrrr)\projects\nav-test\main.cpp
+1764272721 source:c:\users\usuario\documents\liusamarchivos(noborrarrrrr)\projects\nav-test\main.cpp
 	"miniwin.h"
 	<stdbool.h>
 	<windows.h>
 	<stdio.h>
+	<cstdlib>
+	<ctime>
+	<string>
 	"entidades.h"
 
-1764192761 c:\users\usuario\documents\liusamarchivos(noborrarrrrr)\projects\nav-test\entidades.h
+1764272795 c:\users\usuario\documents\liusamarchivos(noborrarrrrr)\projects\nav-test\entidades.h
 	"miniwin.h"
 	<stdbool.h>
-	<windows.h>
-	<stdio.h>
 
 1764179055 c:\users\usuario\documents\liusamarchivos(noborrarrrrr)\projects\nav-test\main.cpp
 	"miniwin.h"
