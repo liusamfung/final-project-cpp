@@ -313,7 +313,7 @@ int main() {
     int bordeIzquierdoMapa  = 20;
     int bordeDerechoMapa    = 950;
     int bordeSuperiorMapa   = 150;
-    int bordeInferiorMapa   = 600;
+    int bordeInferiorMapa   = 550;
 
     int contadorEnemigosEliminados = 0;
     int contadorComboKill = 0;
@@ -474,6 +474,7 @@ int main() {
                         mciSendString("close background-level3", NULL, 0, 0);  //Paramos la musica del lvl 2
                         esCarteVictoriaActivo = true;
                         mciSendString("play win-victory repeat notify", NULL, 0, 0); //Empieza la musica lvl 3
+                        mensaje("Autores: Marco Matos, Liu Fung, Valentino Calderon");
                         t = ESCAPE;
                     }
                 }
