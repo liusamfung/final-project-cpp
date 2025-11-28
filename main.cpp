@@ -317,8 +317,10 @@ int main() {
 
     int contadorEnemigosEliminados = 0;
     int contadorComboKill = 0;
+    int puntaje = 0;
 
-    int nivelActual = 1;
+    int nivelActual = 0;
+    //int nivelActual = 1;
 
     int prota_X = 100, prota_Y = 300;
     int balaProta_X = 0, balaProta_Y = 0;
@@ -365,6 +367,27 @@ int main() {
 
 
     while (t != ESCAPE) {
+            if (nivelActual == 0) {
+        borra();
+        dibujarBackground(sizeAncho, sizeAlto, nivelActual); // dibuja el nivel 0
+        refresca();
+
+        // Si el jugador presiona ESPACIO, empieza el juego real
+        if (t == ESPACIO) {
+            nivelActual = 1;   // pasamos al nivel 1
+
+            // (opcional) Reinicio de variables si quieres empezar "limpio"
+            prota_X = 100; prota_Y = 300;
+            contadorEnemigosEliminados = 0;
+            contadorVidaProtagonista   = 3;
+            vidaJefeFinal              = VIDA_JEFE_FINAL_MAX;
+        }
+
+        espera(10);
+        t = tecla();
+        continue;
+        }
+
         mciSendString("play round-one", NULL, 0, 0);  //no Repetir
         mciSendString("play background-level1 repeat notify", NULL, 0, 0); //repetir es sonido de fondo de lvl 1
 
@@ -435,6 +458,7 @@ int main() {
                     botarEntidadDelMapa(enemigoPrincipal_X, enemigoPrincipal_Y);
                     contadorEnemigosEliminados++;
                     contadorComboKill++;
+                    puntaje += 50;
                     reproducirEfecto("sonidos/espa-dead.WAV");
                 }
 
@@ -443,6 +467,7 @@ int main() {
                     botarEntidadDelMapa(enemigo2_X, enemigo2_Y);
                     contadorEnemigosEliminados++;
                     contadorComboKill++;
+                    puntaje += 50;
                     reproducirEfecto("sonidos/espa-dead.WAV");
                 }
 
@@ -451,6 +476,7 @@ int main() {
                     botarEntidadDelMapa(enemigo3_X, enemigo3_Y);
                     contadorEnemigosEliminados++;
                     contadorComboKill++;
+                    puntaje += 50;
                     reproducirEfecto("sonidos/espa-dead.WAV");
                 }
             } else {
@@ -470,6 +496,7 @@ int main() {
                         botarEntidadDelMapa(enemigoPrincipal_X, enemigoPrincipal_Y);
                         contadorEnemigosEliminados++;
                         contadorComboKill++;
+                        puntaje += 200;
                         espera(100);
                         mciSendString("close background-level3", NULL, 0, 0);  //Paramos la musica del lvl 2
                         esCarteVictoriaActivo = true;
@@ -748,6 +775,13 @@ int main() {
         if (contadorVidaProtagonista >= 2) dibujarCorazon(30, 600);
         if (contadorVidaProtagonista >= 3) dibujarCorazon(50, 600);
 
+        // Texto de puntaje
+        {
+            std::string textoPuntaje = "Puntos: " + std::to_string(puntaje);
+            color_rgb(255, 255, 255);
+            texto(20, 20, textoPuntaje.c_str());
+        }
+
         // Bala del protagonista
         dibujarBalaSi(balaProtaVolando, balaProta_X, balaProta_Y,
                       "PROTAGONISTA", nivelActual);
@@ -763,6 +797,23 @@ int main() {
         espera(10);
         t = tecla();
     }
+
+    if (esCarteVictoriaActivo || esCartelDerrotaActivo) {
+    // Nueva pantalla final unificada
+    dibujarPantallaFinal(sizeAncho, sizeAlto,
+                         esCarteVictoriaActivo,
+                         esCartelDerrotaActivo);
+
+    refresca();
+
+    // Mantener la pantalla final hasta que el jugador presione ESC
+    int teclaFinal = 0;
+    while (teclaFinal != ESCAPE) {
+        espera(10);
+        teclaFinal = tecla();
+    }
+}
+
 
     return 0;
 }
