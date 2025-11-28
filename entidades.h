@@ -546,6 +546,229 @@ void dibujarCartelTercerNivel(int sizeAncho, int sizeAlto,
 }
 
 void dibujarBackground(int sizeAncho, int sizeAlto, int nivelActual) {
+
+    if (nivelActual == 0) {
+        int x_centro = sizeAncho / 2;
+        int y_centro = sizeAlto / 2;
+
+        // =========================
+        //  CIELO CON DEGRADADO
+        // =========================
+        int alturaCielo = (sizeAlto * 3) / 5; // 60% de la pantalla
+        int bandasCielo = 8;
+
+        for (int i = 0; i < bandasCielo; i++) {
+            int y1 = (alturaCielo * i) / bandasCielo;
+            int y2 = (alturaCielo * (i + 1)) / bandasCielo;
+
+            int azul   = 60  + i * 12;  // va aclarando
+            int rojo   = 10  + i * 4;
+            int verde  = 10  + i * 6;
+
+            color_rgb(rojo, verde, azul);
+            rectangulo_lleno(0, y1, sizeAncho, y2);
+        }
+
+        // Estrellas
+        color_rgb(240, 240, 240);
+        for (int i = 0; i < 35; i++) {
+            int sx = rand() % sizeAncho;
+            int sy = rand() % (alturaCielo - 40) + 20;
+            punto(sx, sy);
+        }
+
+        // =========================
+        //  MAR POR BANDAS
+        // =========================
+        int yMarInicio = alturaCielo;
+        int marAltura  = sizeAlto - yMarInicio;
+        int bandasMar  = 6;
+
+        for (int i = 0; i < bandasMar; i++) {
+            int y1 = yMarInicio + (marAltura * i) / bandasMar;
+            int y2 = yMarInicio + (marAltura * (i + 1)) / bandasMar;
+
+            int azulBase = 110 + i * 15;
+            color_rgb(0, 40 + i * 10, azulBase);
+            rectangulo_lleno(0, y1, sizeAncho, y2);
+        }
+
+        // Olas con líneas
+        color_rgb(200, 230, 255);
+        for (int y = yMarInicio + 20; y < sizeAlto; y += 40) {
+            for (int x = 0; x < sizeAncho; x += 25) {
+                linea(x, y, x + 15, y);
+            }
+        }
+
+        // =========================
+        //  COSTA / MUELLE IZQUIERDA
+        // =========================
+        int xCosta1 = 0;
+        int yCosta1 = yMarInicio + 40;
+        int xCosta2 = sizeAncho / 4;
+        int yCosta2 = sizeAlto;
+
+        color_rgb(80, 50, 25);
+        rectangulo_lleno(xCosta1, yCosta1, xCosta2, yCosta2);
+
+        // Tablas del muelle
+        color_rgb(110, 70, 35);
+        for (int y = yCosta1 + 20; y < yCosta2; y += 30) {
+            linea(xCosta1 + 10, y, xCosta2 - 10, y);
+        }
+
+        // =========================
+        //  BANNER DEL TITULO
+        // =========================
+        int anchoBannerTitulo = sizeAncho - 200;
+        int altoBannerTitulo  = 90;
+        int xBanner1 = (sizeAncho - anchoBannerTitulo) / 2;
+        int yBanner1 = 35;
+        int xBanner2 = xBanner1 + anchoBannerTitulo;
+        int yBanner2 = yBanner1 + altoBannerTitulo;
+
+        // Fondo oscuro
+        color_rgb(15, 15, 45);
+        rectangulo_lleno(xBanner1, yBanner1, xBanner2, yBanner2);
+
+        // Marco dorado doble
+        color_rgb(255, 215, 0);
+        rectangulo(xBanner1, yBanner1, xBanner2, yBanner2);
+        rectangulo(xBanner1 + 3, yBanner1 + 3, xBanner2 - 3, yBanner2 - 3);
+
+        // TÍTULO (UNA SOLA VEZ, SIN DOBLE)
+        color_rgb(255, 255, 0);
+        texto(x_centro - 240, yBanner1 + 28, "INCA VS ESPANOLES: BATALLA FINAL");
+
+        // Subtitulo
+        color_rgb(220, 220, 230);
+        texto(x_centro - 210, yBanner1 + 55, "Defiende al imperio Inca del gran galeon invasor");
+
+        // =========================
+        //  MINI INCA A LA IZQUIERDA
+        // =========================
+        int x_inca = xCosta2 - 120;
+        int y_inca = yMarInicio + 10;
+
+        // Piernas
+        color_rgb(150, 80, 50);
+        rectangulo_lleno(x_inca + 15, y_inca + 35, x_inca + 22, y_inca + 55);
+        rectangulo_lleno(x_inca + 28, y_inca + 35, x_inca + 35, y_inca + 55);
+        color_rgb(255, 215, 0);
+        rectangulo_lleno(x_inca + 15, y_inca + 55, x_inca + 22, y_inca + 58);
+        rectangulo_lleno(x_inca + 28, y_inca + 55, x_inca + 35, y_inca + 58);
+
+        // Torsos
+        color_rgb(150, 0, 0);
+        rectangulo_lleno(x_inca + 10, y_inca + 22, x_inca + 40, y_inca + 35);
+        color_rgb(150, 80, 50);
+        rectangulo_lleno(x_inca + 14, y_inca + 10, x_inca + 36, y_inca + 22);
+
+        // Cabello + corona
+        color_rgb(0, 0, 0);
+        rectangulo_lleno(x_inca + 12, y_inca + 8, x_inca + 38, y_inca + 12);
+        color_rgb(255, 215, 0);
+        rectangulo_lleno(x_inca + 14, y_inca + 5, x_inca + 36, y_inca + 8);
+        color_rgb(255, 255, 255);
+        rectangulo_lleno(x_inca + 23, y_inca - 4, x_inca + 27, y_inca + 5);
+
+        // Arco
+        color_rgb(100, 50, 0);
+        rectangulo_lleno(x_inca + 40, y_inca + 15, x_inca + 43, y_inca + 45);
+        // Cuerda
+        color_rgb(220, 220, 220);
+        linea(x_inca + 40, y_inca + 17, x_inca + 40, y_inca + 43);
+
+        // Texto debajo del inca
+        color_rgb(255, 255, 0);
+        texto(x_inca - 10, y_inca + 65, "INCA ATahualpa");
+
+        // =========================
+        //  MINI GALEON A LA DERECHA
+        // =========================
+        int ANCHO_BARCO = 260;
+        int x_barco = sizeAncho - ANCHO_BARCO - 80;
+        int y_barco = yMarInicio + marAltura / 2 - 60;
+
+        // Casco
+        color_rgb(90, 60, 30);
+        rectangulo_lleno(x_barco, y_barco + 40, x_barco + ANCHO_BARCO, y_barco + 90);
+        color_rgb(120, 80, 40);
+        rectangulo_lleno(x_barco + 20, y_barco + 30, x_barco + ANCHO_BARCO - 20, y_barco + 40);
+
+        // Mástil y vela
+        int x_mastil = x_barco + ANCHO_BARCO / 2;
+        color_rgb(70, 40, 20);
+        rectangulo_lleno(x_mastil - 3, y_barco + 5, x_mastil + 3, y_barco + 40);
+
+        color_rgb(245, 245, 230);
+        rectangulo_lleno(x_barco + 45, y_barco + 8, x_barco + ANCHO_BARCO - 45, y_barco + 35);
+
+        color_rgb(200, 0, 0);
+        rectangulo_lleno(x_mastil - 2, y_barco + 8, x_mastil + 2, y_barco + 35);
+        rectangulo_lleno(x_barco + 55, y_barco + 20, x_barco + ANCHO_BARCO - 55, y_barco + 24);
+
+        // Pequeñas ventanas / canones
+        color_rgb(30, 30, 30);
+        for (int i = 35; i <= ANCHO_BARCO - 70; i += 60) {
+            rectangulo_lleno(x_barco + i, y_barco + 60, x_barco + i + 20, y_barco + 72);
+        }
+
+        // Texto debajo del barco
+        color_rgb(255, 255, 0);
+        texto(x_barco + 40, y_barco + 95, "Galeon Espanol");
+
+        // =========================
+        //  PANEL DE CONTROLES
+        // =========================
+        int anchoPanelControles = 380;
+        int altoPanelControles  = 210;
+        int xPC1 = 60;
+        int yPC1 = yMarInicio + 40;
+        int xPC2 = xPC1 + anchoPanelControles;
+        int yPC2 = yPC1 + altoPanelControles;
+
+        // Fondo
+        color_rgb(15, 20, 45);
+        rectangulo_lleno(xPC1, yPC1, xPC2, yPC2);
+        // Borde
+        color_rgb(255, 215, 0);
+        rectangulo(xPC1, yPC1, xPC2, yPC2);
+
+        // Texto de controles
+        color_rgb(255, 255, 255);
+        texto(xPC1 + 20, yPC1 + 30, "CONTROLES:");
+        texto(xPC1 + 20, yPC1 + 70, "FLECHA ARRIBA : Mover arriba");
+        texto(xPC1 + 20, yPC1 + 100,"FLECHA ABAJO  : Mover abajo");
+        texto(xPC1 + 20, yPC1 + 130,"ESPACIO       : Disparar flecha");
+
+        // =========================
+        //  BANNER "PRESIONA ESPACIO"
+        //  (MOVIDO MÁS ABAJO PARA NO TAPAR EL BARCO)
+        // =========================
+        int anchoBannerMsg = 520;
+        int altoBannerMsg  = 40;
+        int xMsg1 = x_centro - anchoBannerMsg / 2;
+        int yMsg1 = sizeAlto - 70;          // estaba más arriba, ahora va casi al fondo
+        int xMsg2 = xMsg1 + anchoBannerMsg;
+        int yMsg2 = yMsg1 + altoBannerMsg;
+
+        // Fondo
+        color_rgb(15, 15, 40);
+        rectangulo_lleno(xMsg1, yMsg1, xMsg2, yMsg2);
+
+        // Borde
+        color_rgb(255, 215, 0);
+        rectangulo(xMsg1, yMsg1, xMsg2, yMsg2);
+        rectangulo(xMsg1 + 3, yMsg1 + 3, xMsg2 - 3, yMsg2 - 3);
+
+        // Texto centrado
+        color_rgb(255, 255, 0);
+        texto(x_centro - 190, yMsg1 + 15, "PRESIONA ESPACIO PARA EMPEZAR");
+
+    }
+
     if (nivelActual == 1){
                 // --- CIELO ANDINO (de azul oscuro a azul claro) ---
     for(int i = 0; i < sizeAlto*0.20; i++){
@@ -835,6 +1058,85 @@ void dibujarBackground(int sizeAncho, int sizeAlto, int nivelActual) {
     }
 
     }
+    if (nivelActual == 4) {
+        borra();  // por si quieres que no se vea nada del frame anterior
+
+        // ----- CIELO EN DEGRADADO (AMANECER ANDINO) -----
+        int alturaCielo = sizeAlto * 65 / 100; // 65% de la altura
+        for (int y = 0; y < alturaCielo; y++) {
+            int r = 20 + y / 4;
+            int g = 40 + y / 6;
+            int b = 100 + y / 10;
+            if (r > 255) r = 255;
+            if (g > 255) g = 255;
+            if (b > 255) b = 255;
+
+            color_rgb(r, g, b);
+            rectangulo_lleno(0, y, sizeAncho, y + 1);
+        }
+
+        // ----- SUELO / ANDENES -----
+        int ySuelo = alturaCielo;
+        color_rgb(90, 60, 30);
+        rectangulo_lleno(0, ySuelo, sizeAncho, sizeAlto);
+
+        // Plataforma tipo templo inca
+        int anchoTemplo = 260;
+        int altoTemplo  = 70;
+        int xTemplo = sizeAncho / 2 - anchoTemplo / 2;
+        int yTemplo = ySuelo - altoTemplo;
+
+        color_rgb(140, 110, 70);
+        rectangulo_lleno(xTemplo, yTemplo, xTemplo + anchoTemplo, yTemplo + altoTemplo);
+
+        // escalones
+        color_rgb(110, 85, 55);
+        for (int i = 0; i < 4; i++) {
+            int escalonY = yTemplo + i * 10;
+            rectangulo_lleno(xTemplo - i * 10, escalonY,
+                             xTemplo + anchoTemplo + i * 10, escalonY + 10);
+        }
+
+        // ----- SOL INCA A LA DERECHA -----
+        int xSol = sizeAncho - 140;
+        int ySol = 110;
+        color_rgb(255, 215, 0);
+        circulo_lleno(xSol, ySol, 35);
+
+        // ----- PROTAGONISTA CELEBRANDO (3 VIDAS) -----
+        int protaX = sizeAncho / 2 - 25;
+        int protaY = yTemplo - 80;
+        dibujarProtagonista(protaX, protaY, 3);
+
+        // ----- BANNER PRINCIPAL CON MENSAJE -----
+        int anchoBannerTitulo = sizeAncho - 200;
+        int altoBannerTitulo  = 90;
+        int xBanner1 = (sizeAncho - anchoBannerTitulo) / 2;
+        int yBanner1 = 35;
+        int xBanner2 = xBanner1 + anchoBannerTitulo;
+        int yBanner2 = yBanner1 + altoBannerTitulo;
+
+        // Fondo oscuro
+        color_rgb(15, 15, 45);
+        rectangulo_lleno(xBanner1, yBanner1, xBanner2, yBanner2);
+
+        // Marco dorado doble
+        color_rgb(255, 215, 0);
+        rectangulo(xBanner1, yBanner1, xBanner2, yBanner2);
+        rectangulo(xBanner1 + 3, yBanner1 + 3, xBanner2 - 3, yBanner2 - 3);
+
+        // Textos
+        color_rgb(255, 255, 255);
+        texto(xBanner1 + 90, yBanner1 + 20, "¡VICTORIA EN EL TAHUANTINSUYO!");
+        color_rgb(230, 230, 230);
+        texto(xBanner1 + 20, yBanner1 + 55, "Protegiste la riqueza cultural del Peru.");
+        texto(xBanner1 + 20, yBanner1 + 75, "Cusco permanecera libre del saqueo espanol.");
+
+        // Mensaje inferior para salir
+        color_rgb(255, 255, 255);
+        texto(sizeAncho / 2 - 200, sizeAlto - 40,
+              "Presiona ESC para cerrar el juego");
+    }
 }
 
 
@@ -873,5 +1175,222 @@ void dibujarBarraVidaJefe(int vidaActual, int vidaMaxima,
 
     rectangulo_lleno(x1, y1, x1 + anchoVida, y2);
 }
+void dibujarPantallaFinal(int sizeAncho, int sizeAlto, bool esVictoria, bool esDerrota) {
+    // Limpiar cualquier resto del frame anterior
+    borra();
+
+    // Resolver modo final (evitar superposicion)
+    bool modoVictoria = false;
+    bool modoDerrota  = false;
+
+    if (esVictoria && !esDerrota) {
+        modoVictoria = true;
+    } else if (esDerrota && !esVictoria) {
+        modoDerrota = true;
+    } else if (esVictoria && esDerrota) {
+        // Si por error llegan las dos en true, damos prioridad a victoria
+        modoVictoria = true;
+    } else {
+        // Si ninguna llega en true, mostramos una pantalla neutra de derrota
+        modoDerrota = true;
+    }
+
+    if (modoVictoria) {
+        // =========================
+        //  FONDO: AMANECER ANDINO
+        // =========================
+        int alturaCielo = (sizeAlto * 3) / 5; // 60% de la pantalla
+        for (int y = 0; y < alturaCielo; y++) {
+            int r = 30 + (150 * y) / alturaCielo;   // de morado oscuro a naranja
+            int g = 40 + (110 * y) / alturaCielo;
+            int b = 80 + (70  * y) / alturaCielo;
+            color_rgb(r, g, b);
+            rectangulo_lleno(0, y, sizeAncho, y + 1);
+        }
+
+        // Linea de montanias suaves
+        int yMontania = alturaCielo - 20;
+        color_rgb(60, 40, 60);
+        rectangulo_lleno(0, yMontania, sizeAncho, yMontania + 25);
+
+        // Suelo / andenes
+        int ySuelo = alturaCielo + 40;
+        color_rgb(90, 60, 30);
+        rectangulo_lleno(0, ySuelo, sizeAncho, sizeAlto);
+
+        // Plataforma tipo templo inca centrada
+        int anchoTemplo = 260;
+        int altoTemplo  = 70;
+        int xTemplo = sizeAncho / 2 - anchoTemplo / 2;
+        int yTemplo = ySuelo - altoTemplo - 10;
+
+        color_rgb(150, 110, 70);
+        rectangulo_lleno(xTemplo, yTemplo, xTemplo + anchoTemplo, yTemplo + altoTemplo);
+
+        // Escalones
+        color_rgb(120, 90, 50);
+        for (int i = 0; i < 3; i++) {
+            int escalonY = yTemplo + i * 10;
+            rectangulo_lleno(xTemplo - i * 12, escalonY,
+                             xTemplo + anchoTemplo + i * 12, escalonY + 10);
+        }
+
+        // Sol inca a la derecha
+        int xSol = sizeAncho - 120;
+        int ySol = 90;
+        color_rgb(255, 215, 0);
+        circulo_lleno(xSol, ySol, 35);
+
+        // Protagonista celebrando sobre el templo
+        int protaX = sizeAncho / 2 - 30;
+        int protaY = yTemplo - 80;
+        dibujarProtagonista(protaX, protaY, 3);
+
+        // ---------------------------
+        // Banner superior (titulo)
+        // ---------------------------
+        int margenHorizontal = 60;
+        int bannerAncho = sizeAncho - 2 * margenHorizontal;
+        int bx1 = margenHorizontal;
+        int bx2 = bx1 + bannerAncho;
+        int by1 = 25;
+        int by2 = by1 + 70;
+
+        color_rgb(10, 10, 40);
+        rectangulo_lleno(bx1, by1, bx2, by2);
+        color_rgb(255, 215, 0);
+        rectangulo(bx1, by1, bx2, by2);
+        rectangulo(bx1 + 3, by1 + 3, bx2 - 3, by2 - 3);
+
+        color_rgb(255, 255, 255);
+        texto(bx1 + 120, by1 + 25, "VICTORIA EN EL TAHUANTINSUYO!");
+
+        // ---------------------------
+        // Mensaje central
+        // ---------------------------
+        int msgAncho = sizeAncho - 320;
+        int mx1 = (sizeAncho - msgAncho) / 2;
+        int mx2 = mx1 + msgAncho;
+        int my1 = sizeAlto / 2 - 50;
+        int my2 = my1 + 80;
+
+        color_rgb(12, 12, 40);
+        rectangulo_lleno(mx1, my1, mx2, my2);
+        color_rgb(255, 215, 0);
+        rectangulo(mx1, my1, mx2, my2);
+        rectangulo(mx1 + 3, my1 + 3, mx2 - 3, my2 - 3);
+
+        color_rgb(230, 230, 230);
+        texto(mx1 + 20, my1 + 25, "Protegiste la riqueza cultural del Peru.");
+        texto(mx1 + 20, my1 + 45, "Cusco permanecera libre del saqueo espanol.");
+
+    } else if (modoDerrota) {
+        // =========================
+        //  FONDO: ATARDECER OSCURO
+        // =========================
+        int alturaCielo = (sizeAlto * 3) / 5; // 60% de la pantalla
+        for (int y = 0; y < alturaCielo; y++) {
+            int r = 5  + (40 * y) / alturaCielo;   // azul muy oscuro
+            int g = 0  + (15 * y) / alturaCielo;
+            int b = 25 + (70 * y) / alturaCielo;
+            color_rgb(r, g, b);
+            rectangulo_lleno(0, y, sizeAncho, y + 1);
+        }
+
+        int yHorizonte = alturaCielo + 5;
+
+        // Mar profundo
+        color_rgb(5, 10, 35);
+        rectangulo_lleno(0, yHorizonte, sizeAncho, sizeAlto);
+
+        // Reflejo rojizo en el mar
+        color_rgb(40, 0, 0);
+        rectangulo_lleno(0, yHorizonte, sizeAncho, yHorizonte + 40);
+
+        // ---------------------------
+        // Barco espanol dominante
+        // ---------------------------
+        int anchoBarco = 320;
+        int altoBarco  = 60;
+        int xBarco = sizeAncho / 2 - anchoBarco / 2;
+        int yBarco = yHorizonte - altoBarco + 20;
+
+        // Casco
+        color_rgb(25, 25, 45);
+        rectangulo_lleno(xBarco, yBarco + 20, xBarco + anchoBarco, yBarco + 20 + altoBarco);
+
+        // Cubierta
+        color_rgb(45, 45, 70);
+        rectangulo_lleno(xBarco + 40, yBarco + 5, xBarco + anchoBarco - 40, yBarco + 25);
+
+        // Mastil principal
+        color_rgb(120, 120, 140);
+        rectangulo_lleno(xBarco + anchoBarco / 2 - 5, yBarco - 40,
+                         xBarco + anchoBarco / 2 + 5, yBarco + 20);
+
+        // Vela
+        color_rgb(230, 230, 240);
+        rectangulo_lleno(xBarco + anchoBarco / 2 + 5, yBarco - 35,
+                         xBarco + anchoBarco / 2 + 90, yBarco + 10);
+
+        // Cruz roja en la vela
+        color_rgb(200, 0, 0);
+        rectangulo_lleno(xBarco + anchoBarco / 2 + 45, yBarco - 35,
+                         xBarco + anchoBarco / 2 + 50, yBarco + 10);
+        rectangulo_lleno(xBarco + anchoBarco / 2 + 25, yBarco - 10,
+                         xBarco + anchoBarco / 2 + 70, yBarco - 5);
+
+        // ---------------------------
+        // Banner superior (titulo)
+        // ---------------------------
+        int margenHorizontal = 60;
+        int bannerAncho = sizeAncho - 2 * margenHorizontal;
+        int bx1 = margenHorizontal;
+        int bx2 = bx1 + bannerAncho;
+        int by1 = 25;
+        int by2 = by1 + 70;
+
+        color_rgb(5, 0, 0);
+        rectangulo_lleno(bx1, by1, bx2, by2);
+        color_rgb(255, 0, 0);
+        rectangulo(bx1, by1, bx2, by2);
+        rectangulo(bx1 + 3, by1 + 3, bx2 - 3, by2 - 3);
+
+        color_rgb(255, 255, 255);
+        texto(bx1 + 180, by1 + 25, "PERDISTE...");
+
+        // ---------------------------
+        // Mensaje central
+        // ---------------------------
+        int msgAncho = sizeAncho - 320;
+        int mx1 = (sizeAncho - msgAncho) / 2;
+        int mx2 = mx1 + msgAncho;
+        int my1 = sizeAlto / 2 - 50;
+        int my2 = my1 + 80;
+
+        color_rgb(10, 0, 0);
+        rectangulo_lleno(mx1, my1, mx2, my2);
+        color_rgb(255, 0, 0);
+        rectangulo(mx1, my1, mx2, my2);
+        rectangulo(mx1 + 3, my1 + 3, mx2 - 3, my2 - 3);
+
+        color_rgb(230, 230, 230);
+        texto(mx1 + 20, my1 + 25, "Pizarro se llevo el oro.");
+        texto(mx1 + 20, my1 + 45, "Intenta de nuevo para cambiar la historia.");
+    }
+
+    // =========================
+    //  CREDITOS COMUNES
+    // =========================
+    color_rgb(255, 255, 255);
+    int yCred1 = sizeAlto - 80;
+    int yCred2 = sizeAlto - 60;
+    int yInstr = sizeAlto - 40;
+
+    texto(sizeAncho / 2 - 70,  yCred1, "Gracias por jugar");
+    texto(sizeAncho / 2 - 220, yCred2, "Autores: Marco Matos, Liu Fung, Valentino Calderon");
+    texto(sizeAncho / 2 - 190, yInstr, "Presiona ESC para cerrar el juego");
+}
+
 
 #endif // ENTIDADES_H
